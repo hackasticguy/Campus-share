@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Requests | Campus Share</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --req-primary: #0d9488;
+      --req-gradient: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #22d3ee 100%);
+    }
+
+    .page-hero {
+      min-height: 75vh;
+      background: var(--req-gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0 0 40px 40px;
+      box-shadow: 0 20px 60px rgba(13,148,136,0.4);
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="180" cy="180" r="140" fill="%23ffffff12"/><circle cx="820" cy="320" r="200" fill="%23ffffff10"/><circle cx="600" cy="750" r="160" fill="%23ffffff15"/></svg>') center/cover no-repeat;
+      opacity: 0.5;
+    }
+    .page-hero h1 { font-size: 4.8rem; font-weight: 900; text-shadow: 0 6px 30px rgba(0,0,0,0.4); }
+    @media (max-width: 768px) { .page-hero h1 { font-size: 3rem; } }
+
+    .request-card {
+      border-radius: 28px;
+      padding: 2.5rem;
+      background: var(--bs-card-bg);
+      border: none;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .request-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 7px;
+      background: var(--req-gradient);
+      border-radius: 28px 28px 0 0;
+    }
+    .request-card:hover {
+      transform: translateY(-16px) scale(1.02);
+      box-shadow: 0 30px 70px rgba(13,148,136,0.35) !important;
+    }
+    .item-thumb {
+      width: 110px; height: 110px; object-fit: cover; border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 4px solid white;
+    }
+    .req-status {
+      font-size: 0.9rem; font-weight: 700; padding: 10px 20px;
+      border-radius: 50px; letter-spacing: 0.5px;
+    }
+    .req-approved { background: linear-gradient(135deg, #22c55e, #86efac); color: white; }
+    .req-pending  { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: white; }
+    .req-rejected { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+
+    .filter-box {
+      border-radius: 32px; padding: 2.5rem; background: var(--bs-card-bg);
+      border: none; box-shadow: 0 15px 50px rgba(0,0,0,0.15); position: relative; overflow: hidden;
+    }
+    .filter-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px;
+      background: var(--req-gradient);
+    }
+    .section-title {
+      font-size: 2.8rem; font-weight: 900;
+      background: linear-gradient(90deg, #0d9488, #0891b2);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .navbar-brand { color: var(--req-primary) !important; font-weight: 800 !important; font-size: 1.5rem !important; }
+    .navbar .nav-link { font-weight: 600 !important; opacity: 0.9; transition: opacity .2s; }
+    .navbar .nav-link:hover { opacity: 1; }
+    .navbar .nav-link.active { color: var(--req-primary) !important; font-weight: 700 !important; opacity: 1 !important; }
+
+    .reveal { opacity: 0; transform: translateY(80px); transition: all 1.2s cubic-bezier(0.25,0.8,0.25,1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.2s; }
+    .reveal-delay-2 { transition-delay: 0.4s; }
+    .reveal-delay-3 { transition-delay: 0.6s; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm sticky-top">
+  <div class="container-fluid px-4">
+    <div class="d-flex align-items-center">
+      <a class="navbar-brand" href="index.html">Campus Share</a>
+      <ul class="navbar-nav d-none d-lg-flex gap-5 ms-4">
+        <li class="nav-item"><a class="nav-link px-3" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link px-3" href="browse.html">Browse</a></li>
+      </ul>
+    </div>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <ul class="navbar-nav d-none d-lg-flex gap-5 me-4">
+        <li class="nav-item"><a class="nav-link px-3" href="my-items.html">My Items</a></li>
+        <li class="nav-item"><a class="nav-link px-3 active" href="requests.html" aria-current="page">Requests</a></li>
+      </ul>
+      <button class="btn btn-outline-secondary btn-sm" id="themeToggle">
+        <span id="themeText">Dark Mode</span>
+      </button>
+      <a href="sign-in.html" class="btn btn-primary btn-sm">Sign In</a>
+      <button class="navbar-toggler ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="offcanvas offcanvas-end" id="mobileMenu">
+  <div class="offcanvas-header"><h5>Menu</h5><button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button></div>
+  <div class="offcanvas-body">
+    <ul class="navbar-nav">
+      <li><a class="nav-link py-3" href="index.html">Home</a></li>
+      <li><a class="nav-link py-3" href="browse.html">Browse</a></li>
+      <li><a class="nav-link py-3" href="my-items.html">My Items</a></li>
+      <li><a class="nav-link py-3 active" href="requests.html">Requests</a></li>
+    </ul>
+  </div>
+</div>
+
+<section class="page-hero text-center position-relative">
+  <div class="container position-relative reveal">
+    <h1 class="display-4 fw-bold mb-3">Your Requests</h1>
+    <p class="lead fs-3 opacity-95">Track all your borrow and swap requests in one place</p>
+    <p class="mt-4 fs-5 opacity-90">Never miss an update — see what's approved, pending, or returned</p>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="filter-box mb-5 reveal reveal-delay-1">
+    <h3 class="text-center mb-4 fw-bold" style="color:var(--req-primary)">Filter Your Requests</h3>
+    <div class="row g-4 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label fw-bold">Request Type</label>
+        <select class="form-select form-select-lg">
+          <option>All Requests</option>
+          <option>Borrow</option>
+          <option>Swap</option>
+        </select>
+      </div>
+      <div class="col-md-5">
+        <label class="form-label fw-bold">Status</label>
+        <select class="form-select form-select-lg">
+          <option>All Status</option>
+          <option>Approved</option>
+          <option>Pending</option>
+          <option>Rejected</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-lg w-100" style="background:var(--req-gradient);color:white;border:none;">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title text-center mb-5 reveal">Your Active Requests</h2>
+  <div class="row g-5">
+    <div class="col-12 reveal reveal-delay-1">
+      <div class="request-card">
+        <div class="d-flex gap-4 align-items-start">
+          <img src="data:image/jpeg;base64,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" class="item-thumb" alt="MacBook">
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h4 class="fw-bold mb-1">MacBook Pro 13" (2020)</h4>
+                <p class="text-muted small">Requested 2 days ago • Borrow</p>
+              </div>
+              <span class="req-status req-approved">Approved</span>
+            </div>
+            <p class="mb-2"><strong>Pickup:</strong> Room 214, East Hall • Owner: Priya Mehta</p>
+            <p class="text-success fw-bold mb-3">Pickup confirmed • Return by: Dec 7</p>
+            <div class="d-flex gap-3">
+              <button class="btn btn-success btn-lg px-4">Mark as Returned</button>
+              <button class="btn btn-outline-primary">Message Owner</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 reveal reveal-delay-2">
+      <div class="request-card">
+        <div class="d-flex gap-4 align-items-start">
+          <img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=800&q=80" class="item-thumb" alt="Watch">
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h4 class="fw-bold mb-1">Vintage Swiss Watch</h4>
+                <p class="text-muted small">Requested 4 days ago • Swap</p>
+              </div>
+              <span class="req-status req-pending">Pending</span>
+            </div>
+            <p class="mb-3">You offered: Bose Headphones • Waiting for owner review</p>
+            <div class="d-flex gap-3">
+              <button class="btn btn-outline-dark btn-lg px-4">Edit Offer</button>
+              <button class="btn btn-outline-danger btn-lg px-4">Cancel Request</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 reveal reveal-delay-3">
+      <div class="request-card">
+        <div class="d-flex gap-4 align-items-start">
+          <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80" class="item-thumb" alt="Puppy">
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h4 class="fw-bold mb-1">Russian Bread Puppy (Very Fluffy)</h4>
+                <p class="text-muted small">Requested 1 day ago • Borrow</p>
+              </div>
+              <span class="req-status req-rejected">Rejected</span>
+            </div>
+            <p class="text-danger fw-bold mb-4">Owner said: "Not for sharing — he's family!"</p>
+            <button class="btn btn-outline-primary btn-lg px-5">Find Similar Items</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="bg-dark text-white py-5 mt-5">
+  <div class="container text-center reveal">
+    <p class="mb-0 fs-5">© 2025 Campus Share • Made with love (and zero waste) by students</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-bs-theme', savedTheme);
+  document.getElementById('themeText').textContent = savedTheme === 'light' ? 'Dark Mode' : 'Light Mode';
+  document.getElementById('themeToggle')?.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-bs-theme');
+    const newTheme = current === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-bs-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.getElementById('themeText').textContent = newTheme === 'light' ? 'Dark Mode' : 'Light Mode';
+  });
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(e => e.forEach(en => en.isIntersecting && en.target.classList.add('active')), {threshold:0.15});
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
